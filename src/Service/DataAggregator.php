@@ -2,22 +2,53 @@
 
 namespace App\Service;
 
-use App\Interface\DataSourceInterface;
+use App\Entity\Source;
+use App\Interface\DataAggregatorInterface;
+use App\Interface\FormatParserInterface;
+use DOMDocument;
 
-class DataAggregator {
-    
-    private $sources = [];
+class DataAggregator implements DataAggregatorInterface {
 
-    public function addSource(DataSourceInterface $source): void {
-        $this->sources[] = $source;
+    private $url;
+    private $parser;
+
+    public function __construct(string $url) {
+        $this->url = $url;
+    }
+
+    public function setParser(FormatParserInterface $parser): void {
+        $this->parser = $parser;
+    }
+
+    public function fetchData(): array {
+        $response = file_get_contents($this->url);
+        return $this->parser->parse($response);
     }
 
     public function aggregateData(): array {
-        $aggregatedData = [];
-        foreach ($this->sources as $source) {
-            $data = $source->fetchData();
-            $aggregatedData = array_merge($aggregatedData, $data);
-        }
-        return $aggregatedData;
+        return $this->fetchData();
+    }
+
+    public function getPageTitle($url) {
+        // Suppress warnings/errors due to malformed HTML
+        libxml_use_internal_errors(true);
+        
+        // Fetch the HTML content from the URL
+        $htmlContent = file_get_contents($url);
+        
+        // Create a new DOMDocument instance
+        $dom = new DOMDocument();
+        
+        // Load the HTML into the DOMDocument object
+        $dom->loadHTML($htmlContent);
+        
+        // Restore previous error handling
+        libxml_use_internal_errors(false);
+        
+        // Extract the title tag content
+        $titleNodes = $dom->getElementsByTagName('title');
+        
+        // Return the title or a default message if not found
+        return $titleNodes->length > 0 ? $titleNodes->item(0)->nodeValue : 'No title found';
     }
 }

@@ -2,20 +2,18 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[ApiResource]
 class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Source $source = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -26,18 +24,6 @@ class Article
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getSource(): ?Source
-    {
-        return $this->source;
-    }
-
-    public function setSource(?Source $source): static
-    {
-        $this->source = $source;
-
-        return $this;
     }
 
     public function getTitle(): ?string
