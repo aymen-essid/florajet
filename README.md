@@ -2,7 +2,7 @@
 Mise en place de l'environnement
 *******************
 
--  `docker compose up build -d`
+-  `docker compose up --build -d`
 -  `composer install`
 -  `symfony server:start`
 
