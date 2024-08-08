@@ -28,12 +28,12 @@ class DataAggregatorController extends AbstractController
     }
 
 
-    #[Route('/data/aggregator/api', name: 'app_apidata_aggregator')]
-    public function indexApi(EntityManagerInterface $em): JsonResponse
+    #[Route('/data/aggregator/source1', name: 'app_source1_aggregator')]
+    public function source1(EntityManagerInterface $em): JsonResponse
     {
 
         // Create aggregator
-        $aggregator = new DataAggregator('https://saurav.tech/NewsAPI/top-headlines/category/health/fr.json');
+        $aggregator = new DataAggregator($this->getParameter('app.source_1'));
 
         // Create format parsers
         $jsonParser = new JsonParser();
@@ -56,18 +56,44 @@ class DataAggregatorController extends AbstractController
         ]);
     }
 
-    #[Route('/data/aggregator/xml', name: 'app_xmldata_aggregator')]
-    public function indexXml(EntityManagerInterface $em): JsonResponse
+    #[Route('/data/aggregator/source2', name: 'app_source2_aggregator')]
+    public function source2(EntityManagerInterface $em): JsonResponse
+    {
+
+        // Create aggregator
+        $aggregator = new DataAggregator($this->getParameter('app.source_2'));
+
+        // Create format parsers
+        $jsonParser = new JsonParser();
+        $aggregator->setParser($jsonParser);
+
+        $aggregatedData = $aggregator->aggregateData();
+        $artilcles = $aggregatedData['articles'];
+
+        // Save Articles to database
+        foreach($artilcles as $item){
+            $artilcle = new Article();
+            $artilcle->setTitle($item['title']);
+            $artilcle->setContent(($item['content'] != null) ? $item['content'] : $item['url']);
+            $em->persist($artilcle);
+        }
+        $em->flush();
+
+        return $this->json([
+            'data' => $artilcles,
+        ]);
+    }
+
+    #[Route('/data/aggregator/source4', name: 'app_source4_aggregator')]
+    public function source4(EntityManagerInterface $em): JsonResponse
     {
 
         // Create format parsers
         $xmlParser = new XmlParser();
 
         // Create and use aggregator
-        $aggregator = new DataAggregator('https://www.lemonde.fr/rss/une.xml');
+        $aggregator = new DataAggregator($this->getParameter('app.source_4'));
         $aggregator->setParser($xmlParser);
-
-        
 
         $aggregatedData = $aggregator->aggregateData();
         $artilcles = $aggregatedData['channel']['item'];
@@ -82,7 +108,7 @@ class DataAggregatorController extends AbstractController
         $em->flush();
 
         return $this->json([
-            'data' => $aggregatedData,
+            'data' => $artilcles,
         ]);
     }
 }
