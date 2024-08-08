@@ -1,10 +1,10 @@
-###################
+*******************
 Mise en place de l'environnement
-###################
+*******************
 
--  `docker compose up build -d`_
--  `composer install`_
--  `symfony server:start`_
+-  `docker compose up build -d`
+-  `composer install`
+-  `symfony server:start`
 
 Page d'acceuil (Liste des articles) : http://127.0.0.1:8000/
 
@@ -15,9 +15,9 @@ Aggregation des données
 
 Ouvrir ces liens afin de déclencher l'import des articles dans la base de données :
 
--  `http://127.0.0.1:8000/data/aggregator/source1`_
--  `http://127.0.0.1:8000/data/aggregator/source2`_
--  `http://127.0.0.1:8000/data/aggregator/source4`_
+-  `http://127.0.0.1:8000/data/aggregator/source1`
+-  `http://127.0.0.1:8000/data/aggregator/source2`
+-  `http://127.0.0.1:8000/data/aggregator/source4`
 
 
 *******************
@@ -25,7 +25,7 @@ API
 *******************
 
 Lien de la documentation API afin d'effectuer les manipulations des données : 
--  `http://127.0.0.1:8000/api`_ 
+-  `http://127.0.0.1:8000/api`
 
 
 
